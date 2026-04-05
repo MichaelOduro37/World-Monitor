@@ -70,6 +70,7 @@ async def delete_source(
     if source is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Source not found")
     await db.delete(source)
+    await db.flush()
 
 
 @router.post("/{source_id}/trigger", status_code=status.HTTP_202_ACCEPTED)

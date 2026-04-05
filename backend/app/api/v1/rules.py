@@ -65,3 +65,4 @@ async def delete_rule(
     if rule is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rule not found")
     await db.delete(rule)
+    await db.flush()

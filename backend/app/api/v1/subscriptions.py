@@ -78,6 +78,7 @@ async def update_subscription(
         setattr(sub, field, value)
     db.add(sub)
     await db.flush()
+    await db.refresh(sub)
     return sub
 
 
@@ -96,3 +97,4 @@ async def delete_subscription(
     if sub is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Subscription not found")
     await db.delete(sub)
+    await db.flush()
