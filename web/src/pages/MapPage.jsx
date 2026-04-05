@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import useEventStore from '../store/eventStore'
 import EventMap from '../components/EventMap'
 import EventFilters from '../components/EventFilters'
@@ -30,17 +30,14 @@ const styles = {
 
 export default function MapPage() {
   const { events, total, loading, error, filters, setFilter, fetchEvents } = useEventStore()
-  const [localFilters, setLocalFilters] = useState(filters)
 
   useEffect(() => {
     fetchEvents()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [fetchEvents])
 
   const handleFiltersChange = useCallback(
     (newFilters) => {
-      setLocalFilters(newFilters)
       Object.entries(newFilters).forEach(([k, v]) => setFilter(k, v))
-      // Trigger fetch with updated filters
       useEventStore.getState().fetchEvents(newFilters)
     },
     [setFilter]
@@ -48,7 +45,7 @@ export default function MapPage() {
 
   return (
     <div style={styles.root}>
-      <EventFilters filters={localFilters} onChange={handleFiltersChange} />
+      <EventFilters filters={filters} onChange={handleFiltersChange} />
       <div style={styles.mapWrap}>
         <EventMap events={events} />
         {loading && <div style={styles.loadingOverlay}>Loading events…</div>}

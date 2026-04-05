@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react'
+import React, { useEffect, useCallback } from 'react'
 import useEventStore from '../store/eventStore'
 import EventCard from '../components/EventCard'
 import EventFilters from '../components/EventFilters'
@@ -28,17 +28,15 @@ const styles = {
 }
 
 export default function FeedPage() {
-  const { events, total, page, pageSize, loading, error, filters, setFilter, fetchEvents, loadMore } =
+  const { events, total, loading, error, filters, setFilter, fetchEvents, loadMore } =
     useEventStore()
-  const [localFilters, setLocalFilters] = useState(filters)
 
   useEffect(() => {
     fetchEvents()
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [fetchEvents])
 
   const handleFiltersChange = useCallback(
     (newFilters) => {
-      setLocalFilters(newFilters)
       Object.entries(newFilters).forEach(([k, v]) => setFilter(k, v))
       useEventStore.getState().fetchEvents(newFilters)
     },
@@ -49,7 +47,7 @@ export default function FeedPage() {
 
   return (
     <div style={styles.root}>
-      <EventFilters filters={localFilters} onChange={handleFiltersChange} />
+      <EventFilters filters={filters} onChange={handleFiltersChange} />
       <div style={styles.header}>
         <span>
           Showing <span style={styles.totalBadge}>{events.length}</span> of{' '}
