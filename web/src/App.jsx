@@ -8,6 +8,7 @@ import RegisterPage from './pages/RegisterPage'
 import MapPage from './pages/MapPage'
 import FeedPage from './pages/FeedPage'
 import SubscriptionsPage from './pages/SubscriptionsPage'
+import DashboardPage from './pages/DashboardPage'
 
 export default function App() {
   const loadFromStorage = useAuthStore((s) => s.loadFromStorage)
@@ -33,6 +34,7 @@ export default function App() {
           <Route path="map" element={<MapPage />} />
           <Route path="feed" element={<FeedPage />} />
           <Route path="subscriptions" element={<SubscriptionsPage />} />
+          <Route path="dashboard" element={<DashboardPage />} />
         </Route>
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

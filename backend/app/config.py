@@ -52,7 +52,18 @@ class Settings(BaseSettings):
         "https://feeds.bbci.co.uk/news/world/rss.xml",
         "https://rss.nytimes.com/services/xml/rss/nyt/World.xml",
         "https://www.aljazeera.com/xml/rss/all.xml",
+        "https://feeds.reuters.com/reuters/worldNews",
+        "https://news.un.org/feed/subscribe/en/news/all/rss.xml",
+        "https://www.who.int/rss-feeds/news-english.xml",
+        "https://reliefweb.int/updates/rss.xml",
+        "https://apnews.com/rss/apf-topnews",
     ]
+
+    # NASA EONET endpoint
+    NASA_EONET_URL: str = "https://eonet.gsfc.nasa.gov/api/v3/events"
+
+    # ReliefWeb API endpoint
+    RELIEFWEB_URL: str = "https://api.reliefweb.int/v1/disasters"
 
     # Ingestion
     INGESTION_INTERVAL_SECONDS: int = 300
