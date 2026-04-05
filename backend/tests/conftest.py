@@ -103,3 +103,80 @@ def admin_user_data() -> dict:
         "password": "adminpassword123",
         "full_name": "Admin User",
     }
+
+
+@pytest_asyncio.fixture
+async def auth_headers(client: AsyncClient, test_user_data: dict) -> dict:
+    """Register a regular user and return Bearer auth headers."""
+    reg = await client.post("/api/v1/auth/register", json=test_user_data)
+    assert reg.status_code == 201
+    token = reg.json()["access_token"]
+    return {"Authorization": f"Bearer {token}"}
+
+
+@pytest_asyncio.fixture
+async def admin_headers(
+    client: AsyncClient,
+    admin_user_data: dict,
+    db_session: AsyncSession,
+) -> dict:
+    """Register a user, promote to admin via DB, and return Bearer auth headers."""
+    from sqlalchemy import select
+    from app.models.user import User, UserRole
+
+    reg = await client.post("/api/v1/auth/register", json=admin_user_data)
+    assert reg.status_code == 201
+    token = reg.json()["access_token"]
+
+    result = await db_session.execute(
+        select(User).where(User.email == admin_user_data["email"])
+    )
+    user = result.scalars().first()
+    assert user is not None
+    user.role = UserRole.admin
+    db_session.add(user)
+    await db_session.flush()
+
+    return {"Authorization": f"Bearer {token}"}
+
+
+@pytest_asyncio.fixture
+async def make_event(db_session: AsyncSession):
+    """Factory fixture to insert Event rows directly into the test DB."""
+    import uuid
+    from datetime import datetime, timezone
+    from app.models.event import Event, EventType
+
+    created: list[Event] = []
+
+    async def _factory(
+        *,
+        event_type: EventType = EventType.earthquake,
+        title: str = "Test Event",
+        summary: str = "Test summary",
+        lat: float | None = None,
+        lon: float | None = None,
+        severity: float | None = None,
+        start_time: datetime | None = None,
+        **kwargs,
+    ) -> Event:
+        event = Event(
+            id=uuid.uuid4(),
+            source_event_id=str(uuid.uuid4()),
+            event_type=event_type,
+            title=title,
+            summary=summary,
+            lat=lat,
+            lon=lon,
+            severity=severity,
+            start_time=start_time or datetime.now(tz=timezone.utc),
+            tags=[],
+            raw_payload={},
+            **kwargs,
+        )
+        db_session.add(event)
+        await db_session.flush()
+        created.append(event)
+        return event
+
+    return _factory
