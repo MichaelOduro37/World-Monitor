@@ -2,6 +2,7 @@ import React, { useEffect, useCallback } from 'react'
 import useEventStore from '../store/eventStore'
 import EventCard from '../components/EventCard'
 import EventFilters from '../components/EventFilters'
+import LiveIndicator from '../components/LiveIndicator'
 
 const styles = {
   root: { display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' },
@@ -48,6 +49,7 @@ export default function FeedPage() {
   return (
     <div style={styles.root}>
       <EventFilters filters={filters} onChange={handleFiltersChange} />
+      <LiveIndicator onRefresh={() => useEventStore.getState().fetchEvents()} />
       <div style={styles.header}>
         <span>
           Showing <span style={styles.totalBadge}>{events.length}</span> of{' '}

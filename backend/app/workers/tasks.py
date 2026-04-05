@@ -16,6 +16,7 @@ from app.schemas.event import EventCreate
 from app.workers.celery_app import celery_app
 from app.workers.enrichment import enrich_event_location
 from app.services.notification_service import evaluate_and_notify
+from app.services.dedup_service import detect_and_mark_duplicates
 
 logger = logging.getLogger(__name__)
 
@@ -72,6 +73,12 @@ async def _save_events(events: list[EventCreate], source: Source) -> list[Event]
 
         await session.commit()
 
+    # Run duplicate detection on the newly saved events
+    if saved:
+        async with AsyncSessionLocal() as session:
+            await detect_and_mark_duplicates(saved, session)
+            await session.commit()
+
     return saved
 
 
@@ -120,6 +127,16 @@ async def _run_ingest_source(source_id: str) -> int:
         from app.workers.ingestion.rss import RSSIngestor
 
         ingestor = RSSIngestor(feed_url=source.url, source_id=source.id)
+        events_data = await ingestor.fetch()
+    elif source.source_type == SourceType.nasa_eonet:
+        from app.workers.ingestion.nasa_eonet import NASAEONETIngestor
+
+        ingestor = NASAEONETIngestor(source_id=source.id, url=source.url)
+        events_data = await ingestor.fetch()
+    elif source.source_type == SourceType.reliefweb:
+        from app.workers.ingestion.reliefweb import ReliefWebIngestor
+
+        ingestor = ReliefWebIngestor(source_id=source.id, url=source.url)
         events_data = await ingestor.fetch()
     else:
         logger.warning("Unknown source type %s for source %s", source.source_type, source_id)

@@ -6,6 +6,7 @@ import NotificationBadge from './NotificationBadge'
 const NAV_LINKS = [
   { to: '/map', label: '🗺 Map' },
   { to: '/feed', label: '📋 Feed' },
+  { to: '/dashboard', label: '📊 Dashboard' },
   { to: '/subscriptions', label: '🔔 Subscriptions' }
 ]
 

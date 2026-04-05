@@ -106,3 +106,9 @@ export const updateSubscription = (id, payload) =>
 
 export const deleteSubscription = (id) =>
   client.delete(`/subscriptions/${id}`).then((r) => r.data)
+
+// Stats
+export const getStatsSummary = () => client.get('/stats/summary').then((r) => r.data)
+
+export const getStatsHotspots = (days = 7) =>
+  client.get('/stats/hotspots', { params: { days } }).then((r) => r.data)

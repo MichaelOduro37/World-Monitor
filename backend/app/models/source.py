@@ -16,6 +16,8 @@ class SourceType(str, enum.Enum):
     gdacs = "gdacs"
     rss = "rss"
     api = "api"
+    nasa_eonet = "nasa_eonet"
+    reliefweb = "reliefweb"
 
 
 class Source(Base):
