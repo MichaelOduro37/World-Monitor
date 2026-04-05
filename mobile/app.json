@@ -1,0 +1,83 @@
+{
+  "expo": {
+    "name": "World Monitor",
+    "slug": "world-monitor",
+    "version": "0.1.0",
+    "scheme": "world-monitor",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#1a1a2e"
+    },
+    "platforms": ["ios", "android", "web"],
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.worldmonitor.app",
+      "infoPlist": {
+        "UIBackgroundModes": ["remote-notification"],
+        "NSUserNotificationUsageDescription": "Receive alerts for critical world events."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#1a1a2e"
+      },
+      "package": "com.worldmonitor.app",
+      "permissions": [
+        "android.permission.INTERNET",
+        "android.permission.RECEIVE_BOOT_COMPLETED",
+        "android.permission.VIBRATE",
+        "android.permission.POST_NOTIFICATIONS"
+      ],
+      "googleServicesFile": "./google-services.json"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/notification-icon.png",
+          "color": "#1a1a2e",
+          "sounds": [],
+          "androidMode": "default",
+          "androidCollapsedTitle": "World Monitor",
+          "iosDisplayInForeground": true,
+          "androidChannels": [
+            {
+              "name": "world-monitor-alerts",
+              "importance": "MAX",
+              "vibrationPattern": [0, 250, 250, 250],
+              "lightColor": "#FF231F7C",
+              "sound": true,
+              "badge": true,
+              "description": "Critical world event alerts"
+            }
+          ]
+        }
+      ],
+      [
+        "expo-secure-store"
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": false
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "world-monitor"
+      }
+    }
+  }
+}
