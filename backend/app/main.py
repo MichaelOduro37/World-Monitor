@@ -22,14 +22,11 @@ _metrics: dict[str, int] = defaultdict(int)
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # Create all tables on startup (for dev; in prod use Alembic)
     if settings.APP_ENV == "development":
-        try:
-            from app.database import Base
+        from app.database import Base
 
-            async with engine.begin() as conn:
-                await conn.run_sync(Base.metadata.create_all, checkfirst=True)
-            logger.info("Database tables ensured.")
-        except Exception as exc:
-            logger.warning("Could not create DB tables on startup: %s", exc)
+        async with engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all, checkfirst=True)
+        logger.info("Database tables ensured.")
     yield
     await engine.dispose()
 
