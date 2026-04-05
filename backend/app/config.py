@@ -89,6 +89,7 @@ class Settings(BaseSettings):
     @field_validator("RSS_FEEDS", mode="before")
     @classmethod
     def parse_rss_feeds(cls, v: object) -> object:
+        """Accept RSS_FEEDS as a JSON array string or a Python list."""
         if isinstance(v, str):
             return json.loads(v)
         return v
