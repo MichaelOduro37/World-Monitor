@@ -43,8 +43,8 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# CORS
-origins = ["*"] if settings.APP_ENV == "development" else []
+# CORS – allow everything in dev; require explicit origins in production
+origins: list[str] = ["*"] if settings.APP_ENV == "development" else settings.CORS_ORIGINS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,

@@ -1,0 +1,24 @@
+# Fly.io configuration for the World Monitor web dashboard.
+# Deploy from the web/ directory: cd web && fly deploy
+# See DEPLOY.md for full deployment instructions.
+
+app = "world-monitor-web"
+primary_region = "iad"
+
+[build]
+  dockerfile = "Dockerfile"
+  # Replace with your actual backend app URL after deploying the API.
+  [build.args]
+    VITE_API_URL = "https://world-monitor-api.fly.dev/api/v1"
+
+[http_service]
+  internal_port = 80
+  force_https = true
+  auto_stop_machines = true
+  auto_start_machines = true
+  min_machines_running = 0
+
+[[vm]]
+  memory = "256mb"
+  cpu_kind = "shared"
+  cpus = 1

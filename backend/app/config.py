@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from typing import List
 
 from pydantic import field_validator
@@ -25,6 +26,9 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+
+    # CORS – comma-separated list or JSON array of allowed origins (production)
+    CORS_ORIGINS: List[str] = []
 
     # SMTP
     SMTP_HOST: str = ""
@@ -56,12 +60,37 @@ class Settings(BaseSettings):
     # Environment
     APP_ENV: str = "development"
 
+    @field_validator("DATABASE_URL", mode="before")
+    @classmethod
+    def ensure_asyncpg_driver(cls, v: object) -> object:
+        """Normalise DATABASE_URL so it always uses the asyncpg driver.
+
+        Managed database providers (Render, Railway, Fly.io) typically return
+        ``postgres://`` or ``postgresql://`` without the driver suffix, which
+        asyncpg requires.
+        """
+        if isinstance(v, str):
+            if v.startswith("postgres://"):
+                return "postgresql+asyncpg://" + v[len("postgres://"):]
+            if v.startswith("postgresql://"):
+                return "postgresql+asyncpg://" + v[len("postgresql://"):]
+        return v
+
+    @field_validator("CORS_ORIGINS", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, v: object) -> object:
+        if isinstance(v, str):
+            v = v.strip()
+            if v.startswith("["):
+                return json.loads(v)
+            return [o.strip() for o in v.split(",") if o.strip()]
+        return v
+
     @field_validator("RSS_FEEDS", mode="before")
     @classmethod
     def parse_rss_feeds(cls, v: object) -> object:
+        """Accept RSS_FEEDS as a JSON array string or a Python list."""
         if isinstance(v, str):
-            import json
-
             return json.loads(v)
         return v
 
