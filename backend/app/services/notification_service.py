@@ -25,13 +25,15 @@ def _haversine_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
 
 def _point_in_polygon(lat: float, lon: float, polygon_coords: list[list[float]]) -> bool:
     """Ray-casting point-in-polygon check. Coords are [lon, lat] GeoJSON style."""
+    # Small epsilon to prevent division by zero when ray passes through a vertex
+    _EPSILON = 1e-10
     inside = False
     n = len(polygon_coords)
     j = n - 1
     for i in range(n):
         xi, yi = polygon_coords[i][0], polygon_coords[i][1]
         xj, yj = polygon_coords[j][0], polygon_coords[j][1]
-        if ((yi > lat) != (yj > lat)) and (lon < (xj - xi) * (lat - yi) / (yj - yi + 1e-10) + xi):
+        if ((yi > lat) != (yj > lat)) and (lon < (xj - xi) * (lat - yi) / (yj - yi + _EPSILON) + xi):
             inside = not inside
         j = i
     return inside
