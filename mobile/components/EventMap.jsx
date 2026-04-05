@@ -8,8 +8,8 @@ function buildLeafletHTML(events) {
     .filter((e) => e.latitude != null && e.longitude != null)
     .map((e) => {
       const color = getSeverityColor(e.severity);
-      const title = (e.title || '').replace(/'/g, "\\'");
-      const summary = (e.summary || '').replace(/'/g, "\\'").substring(0, 120);
+      const title = (e.title || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+      const summary = (e.summary || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'").substring(0, 120);
       const severity = e.severity || 'unknown';
       const type = (e.event_type || 'event').replace(/_/g, ' ');
       const country = e.country || '';

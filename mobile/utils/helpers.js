@@ -1,5 +1,5 @@
 export const EVENT_TYPES = [
-  { value: 'earthquake', label: '🌋 Earthquake' },
+  { value: 'earthquake', label: '🌍 Earthquake' },
   { value: 'flood', label: '🌊 Flood' },
   { value: 'wildfire', label: '🔥 Wildfire' },
   { value: 'hurricane', label: '🌀 Hurricane' },
