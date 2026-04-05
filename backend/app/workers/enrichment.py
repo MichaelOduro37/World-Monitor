@@ -11,10 +11,10 @@ logger = logging.getLogger(__name__)
 _geolocator = Nominatim(user_agent="world-monitor-enrichment/1.0")
 
 
-async def reverse_geocode(lat: float, lon: float) -> tuple[str | None, str | None]:
+def reverse_geocode(lat: float, lon: float) -> tuple[str | None, str | None]:
     """Return (country, region) for a lat/lon pair using Nominatim.
 
-    Sleeps 1 second between requests to comply with Nominatim ToS.
+    This is a synchronous function intended to be run in a thread-pool executor.
     Returns (None, None) on failure.
     """
     try:
@@ -44,5 +44,5 @@ async def enrich_event_location(lat: Optional[float], lon: Optional[float]) -> t
 
     # Rate-limit: Nominatim ToS requires max 1 request per second
     await asyncio.sleep(1)
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, reverse_geocode, lat, lon)

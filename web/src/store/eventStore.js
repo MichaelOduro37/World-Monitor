@@ -31,7 +31,7 @@ const useEventStore = create((set, get) => ({
     set({ loading: true, error: null })
     const { filters, page, pageSize } = get()
     const merged = { ...filters, ...extraFilters }
-    const params = { page, page_size: pageSize }
+    const params = { page, size: pageSize }
     if (merged.type) params.type = merged.type
     if (merged.severity_min) params.severity_min = merged.severity_min
     if (merged.q) params.q = merged.q
