@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_URL = import.meta.env.VITE_API_URL || '/api'
+const BASE_URL = import.meta.env.VITE_API_URL || '/api/v1'
 
 const client = axios.create({ baseURL: BASE_URL })
 
@@ -70,8 +70,16 @@ client.interceptors.response.use(
 export default client
 
 // Auth
-export const login = (email, password) =>
-  client.post('/auth/login', { email, password }).then((r) => r.data)
+export const login = (email, password) => {
+  const form = new URLSearchParams()
+  form.append('username', email)
+  form.append('password', password)
+  return client
+    .post('/auth/login', form, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    })
+    .then((r) => r.data)
+}
 
 export const register = (email, password, full_name) =>
   client.post('/auth/register', { email, password, full_name }).then((r) => r.data)
@@ -79,7 +87,7 @@ export const register = (email, password, full_name) =>
 export const refreshToken = (refresh_token) =>
   client.post('/auth/refresh', { refresh_token }).then((r) => r.data)
 
-export const getMe = () => client.get('/users/me').then((r) => r.data)
+export const getMe = () => client.get('/auth/me').then((r) => r.data)
 
 // Events
 export const getEvents = (params = {}) =>

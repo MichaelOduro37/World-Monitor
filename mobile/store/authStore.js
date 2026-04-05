@@ -32,8 +32,13 @@ export const useAuthStore = create((set, get) => ({
   },
 
   async login(email, password) {
-    const res = await apiClient.post('/api/auth/token/', { email, password });
-    const token = res.data.access || res.data.token;
+    const form = new URLSearchParams();
+    form.append('username', email);
+    form.append('password', password);
+    const res = await apiClient.post('/api/v1/auth/login', form, {
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    });
+    const token = res.data.access_token;
     const user = res.data.user || { email };
     setAuthToken(token);
     await SecureStore.setItemAsync(TOKEN_KEY, token);
@@ -42,7 +47,7 @@ export const useAuthStore = create((set, get) => ({
   },
 
   async register(email, password, fullName) {
-    await apiClient.post('/api/auth/register/', {
+    await apiClient.post('/api/v1/auth/register', {
       email,
       password,
       full_name: fullName,
